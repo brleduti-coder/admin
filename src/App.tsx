@@ -4,6 +4,7 @@
  */
 
 import { useState, FormEvent } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { Link, Send, CheckCircle2, Loader2, ExternalLink, AlertCircle, Play, Sparkles, Layers, Zap, Instagram, Youtube, Globe, X } from 'lucide-react';
 
@@ -117,78 +118,81 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#050505] text-white font-sans selection:bg-[#FFCC00] selection:text-black overflow-x-hidden">
-      {/* Success Modal / Popup */}
-      <AnimatePresence>
-        {response && response.link && (
-          <motion.div 
-            key="success-modal-container"
-            className="fixed inset-0 z-[100] flex items-center justify-center p-6"
-          >
-            <motion.div
-              key="modal-backdrop"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setResponse(null)}
-              className="absolute inset-0 bg-black/80 backdrop-blur-xl"
-            />
-            
-            <motion.div
-              key="modal-content"
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative w-full max-w-lg bg-[#111] border border-white/10 rounded-[40px] p-10 shadow-[0_0_100px_rgba(255,204,0,0.15)] overflow-hidden"
+      {/* Success Modal / Popup - Portaled to body to prevent DOM issues */}
+      {typeof document !== 'undefined' && createPortal(
+        <AnimatePresence>
+          {response && response.link && (
+            <motion.div 
+              key="success-modal-container"
+              className="fixed inset-0 z-[100] flex items-center justify-center p-6"
             >
-              {/* Decorative background elements */}
-              <div className="absolute -top-24 -right-24 w-48 h-48 bg-[#FFCC00]/10 rounded-full blur-3xl" />
-              <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-[#FFCC00]/5 rounded-full blur-3xl" />
-              
-              <button 
+              <motion.div
+                key="modal-backdrop"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
                 onClick={() => setResponse(null)}
-                className="absolute top-6 right-6 p-2 text-gray-500 hover:text-white transition-colors"
+                className="absolute inset-0 bg-black/80 backdrop-blur-xl"
+              />
+              
+              <motion.div
+                key="modal-content"
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                className="relative w-full max-w-lg bg-[#111] border border-white/10 rounded-[40px] p-10 shadow-[0_0_100px_rgba(255,204,0,0.15)] overflow-hidden"
               >
-                <X size={24} />
-              </button>
-
-              <div className="relative z-10 flex flex-col items-center text-center space-y-8">
-                <div className="w-20 h-20 bg-[#FFCC00] rounded-3xl flex items-center justify-center shadow-[0_0_40px_rgba(255,204,0,0.3)]">
-                  <CheckCircle2 size={40} className="text-black" />
-                </div>
+                {/* Decorative background elements */}
+                <div className="absolute -top-24 -right-24 w-48 h-48 bg-[#FFCC00]/10 rounded-full blur-3xl" />
+                <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-[#FFCC00]/5 rounded-full blur-3xl" />
                 
-                <div className="space-y-3">
-                  <h2 className="text-3xl font-bold tracking-tight text-white">Vídeo Pronto!</h2>
-                  <p className="text-gray-400 leading-relaxed">
-                    {response.message || 'O processamento foi concluído com sucesso. Clique abaixo para acessar o seu vídeo na pasta do Google Drive.'}
-                  </p>
-                </div>
-
-                <motion.a
-                  whileHover={{ scale: 1.02, y: -5 }}
-                  whileTap={{ scale: 0.98 }}
-                  href={response.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group relative flex items-center justify-center w-full py-8 bg-[#FFCC00] text-black rounded-[30px] font-black text-xl uppercase tracking-widest shadow-[0_20px_40px_rgba(255,204,0,0.2)] hover:shadow-[0_25px_50px_rgba(255,204,0,0.3)] transition-all"
+                <button 
+                  onClick={() => setResponse(null)}
+                  className="absolute top-6 right-6 p-2 text-gray-500 hover:text-white transition-colors"
                 >
-                  <div className="flex items-center gap-4">
-                    <Youtube size={28} />
-                    <span>Acessar Vídeo</span>
-                    <Zap size={24} className="group-hover:scale-125 transition-transform" />
+                  <X size={24} />
+                </button>
+  
+                <div className="relative z-10 flex flex-col items-center text-center space-y-8">
+                  <div className="w-20 h-20 bg-[#FFCC00] rounded-3xl flex items-center justify-center shadow-[0_0_40px_rgba(255,204,0,0.3)]">
+                    <CheckCircle2 size={40} className="text-black" />
                   </div>
                   
-                  {/* Animated border effect */}
-                  <div className="absolute inset-0 rounded-[30px] border-2 border-white/20 group-hover:border-white/40 transition-colors" />
-                </motion.a>
-                
-                <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-600">
-                  Brl Educação • Premium Service
-                </p>
-              </div>
+                  <div className="space-y-3">
+                    <h2 className="text-3xl font-bold tracking-tight text-white">Vídeo Pronto!</h2>
+                    <p className="text-gray-400 leading-relaxed">
+                      {response.message || 'O processamento foi concluído com sucesso. Clique abaixo para acessar o seu vídeo na pasta do Google Drive.'}
+                    </p>
+                  </div>
+  
+                  <motion.a
+                    whileHover={{ scale: 1.02, y: -5 }}
+                    whileTap={{ scale: 0.98 }}
+                    href={response.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group relative flex items-center justify-center w-full py-8 bg-[#FFCC00] text-black rounded-[30px] font-black text-xl uppercase tracking-widest shadow-[0_20px_40px_rgba(255,204,0,0.2)] hover:shadow-[0_25px_50px_rgba(255,204,0,0.3)] transition-all"
+                  >
+                    <div className="flex items-center gap-4">
+                      <Youtube size={28} />
+                      <span>Acessar Vídeo</span>
+                      <Zap size={24} className="group-hover:scale-125 transition-transform" />
+                    </div>
+                    
+                    {/* Animated border effect */}
+                    <div className="absolute inset-0 rounded-[30px] border-2 border-white/20 group-hover:border-white/40 transition-colors" />
+                  </motion.a>
+                  
+                  <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-600">
+                    Brl Educação • Premium Service
+                  </p>
+                </div>
+              </motion.div>
             </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
       {/* Background Layers */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-[#FFCC00]/5 blur-[150px] rounded-full" />
