@@ -117,7 +117,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white font-sans selection:bg-[#FFCC00] selection:text-black overflow-x-hidden">
+    <div className="min-h-screen bg-[#050505] text-white font-sans selection:bg-[#FFCC00] selection:text-black overflow-x-hidden" translate="no">
       {/* Success Modal / Popup - Portaled to body to prevent DOM issues */}
       {typeof document !== 'undefined' && createPortal(
         <AnimatePresence>
@@ -311,7 +311,7 @@ export default function App() {
                     <div className="space-y-4">
                       <label htmlFor="url" className="text-sm font-semibold text-[#FFCC00] flex items-center gap-3">
                         <Link size={14} />
-                        Endereço do conteúdo
+                        <span>Endereço do conteúdo</span>
                       </label>
                       <div className="relative group/input">
                         <input
@@ -322,6 +322,7 @@ export default function App() {
                           value={videoUrl}
                           onChange={(e) => setVideoUrl(e.target.value)}
                           className="w-full px-8 py-6 bg-black border border-white/10 rounded-3xl focus:outline-none focus:border-[#FFCC00]/40 focus:ring-[12px] focus:ring-[#FFCC00]/5 transition-all placeholder:text-gray-800 text-base font-medium"
+                          autoComplete="off"
                         />
                       </div>
                     </div>
@@ -331,17 +332,19 @@ export default function App() {
                       disabled={isLoading || !videoUrl}
                       className="w-full bg-[#FFCC00] hover:bg-white disabled:bg-white/5 disabled:text-white/20 disabled:cursor-not-allowed text-black font-bold py-6 rounded-3xl shadow-2xl shadow-[#FFCC00]/10 active:scale-[0.98] transition-all flex items-center justify-center gap-4 text-sm"
                     >
-                      {isLoading ? (
-                        <>
-                          <Loader2 className="animate-spin" size={20} />
-                          Processando informações...
-                        </>
-                      ) : (
-                        <>
-                          <Play size={18} className="fill-black" />
-                          Gerar transcrição
-                        </>
-                      )}
+                      <span className="flex items-center justify-center gap-4">
+                        {isLoading ? (
+                          <span key="loading-state" className="flex items-center gap-4">
+                            <Loader2 className="animate-spin" size={20} />
+                            <span>Processando informações...</span>
+                          </span>
+                        ) : (
+                          <span key="idle-state" className="flex items-center gap-4">
+                            <Play size={18} className="fill-black" />
+                            <span>Gerar transcrição</span>
+                          </span>
+                        )}
+                      </span>
                     </button>
                   </form>
 
@@ -356,8 +359,12 @@ export default function App() {
                       >
                         <AlertCircle className="shrink-0 mt-1" size={20} />
                         <div className="space-y-1">
-                          <p className="text-[10px] font-bold uppercase tracking-widest text-red-500">Falha no Sistema</p>
-                          <p className="text-xs leading-relaxed opacity-80">{error}</p>
+                          <p className="text-[10px] font-bold uppercase tracking-widest text-red-500">
+                            <span>Falha no Sistema</span>
+                          </p>
+                          <p className="text-xs leading-relaxed opacity-80">
+                            <span>{error}</span>
+                          </p>
                         </div>
                       </motion.div>
                     )}
